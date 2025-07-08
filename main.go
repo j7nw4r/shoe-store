@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"github.com/gofiber/fiber/v2"
 	"log"
 	"shoe-store/controller"
@@ -10,7 +11,12 @@ import (
 func main() {
 	app := fiber.New()
 
-	shoeService := service.NewShoeService(nil)
+	db, err := sql.Open("postgres", "postgres://shoeuser:shoepass@localhost:5432/shoestore?sslmode=disable")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	shoeService := service.NewShoeService(db)
 	shoeController := controller.NewShoeController(shoeService)
 	shoeController.RegisterRoutes(app)
 
